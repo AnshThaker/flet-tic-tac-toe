@@ -1,6 +1,8 @@
 import flet as ft
 from elements import Cell, Row
+from game import Game
 
+game = Game()
 
 def main(page: ft.Page):
     page.title = "Tic Tac Toe"
@@ -16,12 +18,24 @@ def main(page: ft.Page):
         alignment=ft.MainAxisAlignment.CENTER,
     )
 
+    def cell_click(e):
+        if e.control.can_click:
+            if game.current_player == "X":
+                e.control.content = ft.Image(src="cross_grey.png", fit=ft.BoxFit.CONTAIN)
+            else:
+                e.control.content = ft.Image(src="circle.png", fit=ft.BoxFit.CONTAIN)
+            e.control.can_click = False
+            e.control.update()
+            game.next_turn()
+            turn_row.controls[0].src = "cross_pale.png" if game.current_player == "X" else "circle.png"
+            turn_row.update()
+
     # starts from 1 (top left) to 9 (bottom right)
     # 2 is top middle
     cells = [
-        Cell(1), Cell(2), Cell(3),
-        Cell(1), Cell(2), Cell(3),
-        Cell(4), Cell(4), Cell(5),
+        Cell(1, 1, cell_click), Cell(2, 2, cell_click), Cell(3, 3, cell_click),
+        Cell(1, 4, cell_click), Cell(2, 5, cell_click), Cell(3, 6, cell_click),
+        Cell(4, 7, cell_click), Cell(4, 8, cell_click), Cell(5, 9, cell_click),
     ]
 
     game_row_1 = Row(
@@ -69,7 +83,9 @@ def main(page: ft.Page):
                 content=game_container,
                 expand=True,
                 alignment=ft.Alignment.CENTER,
-                padding=10
+                padding=10,
+                width=400,
+                height=400
             ),
         ],
         expand=True,
